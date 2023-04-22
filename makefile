@@ -29,4 +29,4 @@ obj/ProgExec.o: src/client/ProgExec.c
 	gcc -Wall -g -c src/client/ProgExec.c -o obj/ProgExec.o
 
 clean:
-	rm -f obj/* tmp/* bin/*
+	rm -f -r obj/* tmp/* bin/*

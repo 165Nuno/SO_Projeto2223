@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
     char ficheiro[114];
 
 
-    sprintf(pasta, "../%s",argv[1]);
+    sprintf(pasta, "../bin/%s",argv[1]);
     // Serve para criar a pasta caso ela não esteja criada
     if (mkdir(pasta, 0777) == -1) {
         perror("Erro ao criar a pasta");
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]){
             removeElem(pid, lista);
 
             // Iniciamos a construção do ficheiro
-            sprintf(ficheiro,"./%s/%d", pasta, pid);
+            sprintf(ficheiro,"../bin/%s/%d", pasta, pid);
             
             FILE* file = fopen(ficheiro, "w");
             if (!file) {
