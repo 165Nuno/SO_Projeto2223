@@ -13,10 +13,21 @@
 #define MAX_BUFFER_SIZE 1024
 
 
+
 int main(int argc, char *argv[]){
     long tempo;
     int n, pid, tam;
     char info[100], nome[100];
+    char pasta[100];
+    char ficheiro[114];
+
+
+    sprintf(pasta, "../%s",argv[1]);
+    // Serve para criar a pasta caso ela não esteja criada
+    if (mkdir(pasta, 0777) == -1) {
+        perror("Erro ao criar a pasta");
+        exit(-1);
+    }
 
 	// Construção do FIFO
     // Este FIFO vai ser o FIFO utilizado por todos os clientes para fazer pedidos ao servidor
@@ -92,6 +103,20 @@ int main(int argc, char *argv[]){
 
             // Remove o programa da lista ligada que terminou a sua execução
             removeElem(pid, lista);
+
+            // Iniciamos a construção do ficheiro
+            sprintf(ficheiro,"./%s/%d", pasta, pid);
+            
+            FILE* file = fopen(ficheiro, "w");
+            if (!file) {
+                perror("Erro ao criar o arquivo");
+                exit(-1);
+            }
+
+            fprintf(file, "Nome: %s\nTempo total: %lims\n", nome, tempo);
+            fclose(file);
+
+            // 
         }
     }
 
