@@ -7,3 +7,4 @@
 #include <sys/wait.h>
 
 void executeBasicProgram(char *command[], int argc, int fout);
+void executaProgramaPipeLine(char* command);

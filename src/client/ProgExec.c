@@ -91,3 +91,99 @@ void executeBasicProgram(char *command[], int argc, int fout){
 	write(1,info,strlen(info)*sizeof(char));
 	// <-
 }
+
+/*
+void executaProgramaPipeLine(char* command,int fout){
+    int nrpipes = 0, i = 0;
+    char *token;
+    const char delimiter[2] = "|";
+
+    printf("Command: %s\n", command);
+
+    while(command[i] != '\0'){
+        if(command[i] == '|'){
+            nrpipes++;
+        }
+        i++;
+    }
+
+    i = 0;
+    char *commands[nrpipes+1];
+
+    token = strtok(command, delimiter);
+    while (token != NULL) {
+        commands[i] = token;    
+        printf("Token: %s\n", token);
+        token = strtok(NULL, delimiter);
+        i++;
+    }
+
+    i=0;
+    while(i<nrpipes+1){
+        printf("%d: %s\n", i, commands[i]);
+        i++;
+    }
+
+    // Inicialização dos pipes
+    int pipes[nrpipes][2];
+    for(i=0; i<nrpipes; i++){
+        pipe(pipes[i]);
+    }
+        
+    for(i = 0; i < nrpipes + 1; i++){
+    // Cria o filho
+    if(fork() == 0){
+        int n = 0, j = 0;
+
+        // conta o número de argumentos no comando atual
+        while(commands[i][j] != '\0'){
+            if(commands[i][j] == ' '){
+                n++;
+            }
+            j++;
+        }
+        
+        char *myCommand[n + 2]; // reserva espaço para os argumentos e NULL no final
+        j = 0;
+
+        // divide o comando atual em argumentos
+        token = strtok(commands[i], " ");
+        while (token != NULL) {
+            myCommand[j] = token;
+            token = strtok(NULL, " ");
+            j++;
+        }
+        myCommand[j] = NULL; // coloca NULL no final do array
+
+        if(i == 0){ // Primeiro filho
+            close(pipes[0][0]); // fecha a leitura do primeiro pipe
+            for(int j = 1; j < nrpipes; j++){ // fecha todas as outras pipes
+                close(pipes[j][0]);
+                close(pipes[j][1]);
+            }
+            dup2(pipes[0][1], 1); // redireciona a saída padrão para o primeiro pipe
+            close(pipes[0][1]); // fecha a escrita do primeiro pipe
+        }
+        else if(i < nrpipes){ // Filhos do meio
+            close(pipes[i-1][1]); // fecha a escrita da pipe anterior
+            close(pipes[i][0]); // fecha a leitura da pipe atual
+            dup2(pipes[i-1][0], 0); // redireciona a entrada padrão para a pipe anterior
+            dup2(pipes[i][1], 1); // redireciona a saída padrão para a pipe atual
+            close(pipes[i-1][0]); // fecha a leitura da pipe anterior
+            close(pipes[i][1]); // fecha a escrita da pipe atual
+        }
+        else{ // Último filho
+            close(pipes[i-1][1]); // fecha a escrita da última pipe
+            dup2(pipes[i-1][0], 0); // redireciona a entrada padrão para a última pipe
+            close(pipes[i-1][0]); // fecha a leitura da última pipe
+        }
+        
+        // executa o comando atual
+        execvp(myCommand[0], myCommand);
+        perror("execvp failed"); // caso a execução falhe
+        exit(1); // termina o processo filho com erro
+    }
+}
+
+}
+*/
