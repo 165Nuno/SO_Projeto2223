@@ -12,6 +12,7 @@
 int main(int argc, char *argv[]){
 	int pid;
 	int tamanho;
+	int tam;
 	char linha[100];
 	char nome_fifo[100];
 	char auxiliar[132];
@@ -126,7 +127,43 @@ switch(argc) {
 			write(1,auxiliar,strlen(auxiliar) * sizeof(char));
 
             
-        }else if (strcmp(argv[1],"stats-command") == 0){
+        }else if (strcmp(argv[1],"stats-uniq") == 0){
+				sprintf(linha,"stuniq");
+				write(fout,linha,strlen(linha) * sizeof(char));
+
+				tamanho = strlen(nome_fifo);
+				write(fout,&tamanho,sizeof(int));
+				write(fout,nome_fifo,tamanho * sizeof(char));
+
+				int numero_prog_pids = argc - 2;
+				write(fout,&numero_prog_pids,sizeof(int));
+
+				// Envia para o servidor os PIDS
+				for(int i = 2; i < argc; i++){
+					tamanho = strlen(argv[i]);
+					write(fout, &tamanho, sizeof(int));
+					write(fout, argv[i], tamanho * sizeof(char));
+				}
+
+				fin = open(nome_fifo, O_RDONLY);
+				if(fin == -1){
+					perror("Erro ao abrir o FIFO para escrita e leitura.");
+					exit(-1);
+				}
+				
+				read(fin,&tam,sizeof(int));
+
+				for(int i = 0; i < tam; i++){
+					read(fin,&tamanho,sizeof(int));
+					read(fin,linha,tamanho * sizeof(char));
+					sprintf(auxiliar,"%s",linha);
+					write(1,auxiliar,strlen(auxiliar) * sizeof(char));
+				}
+
+
+
+			
+		}else if (strcmp(argv[1],"stats-command") == 0){
 				sprintf(linha,"stcomd");
 				write(fout,linha,strlen(linha) * sizeof(char));
 

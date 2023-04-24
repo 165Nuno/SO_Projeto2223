@@ -12,69 +12,103 @@
 
 #define MAX_BUFFER_SIZE 1024
 
-/*
-void exec_stats_time(char *command[], int argc,char* pasta){
-    long contador = 0;
-int i = 0;
-const char delimiter[2] = " ";
-char *commands[100];
-FILE *fp;
-char* ficheiro;
+void exec_uniq(char** str_array, int s, char* pasta, char* nomeFIFO) {
+    int i;
+    int tam;
+    char nome[100];
+    char* ficheiro;
+    char info[100];
+    ficheiro = malloc(100);
+    FILE* fp;
 
-
-token = strtok(command, delimiter);
-while (token != NULL) {
-    commands[i] = token;    
-    printf("Token: %s\n", token);
-    token = strtok(NULL, delimiter);
-    i++;
-}
-commands[i] = '\0';
-
-for(i = 1; commands[i] != '\0';i++){
-    sprintf(ficheiro,"../bin/%s/%s",pasta,commands[i]);
-    fp = fopen(ficheiro, "r");
-    if (fp == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return 1; // ou outro valor de retorno, dependendo da sua aplicação
+    // Array auxiliar para armazenar nomes únicos
+    char** nomes = malloc(s * sizeof(char*));
+    for (i = 0; i < s; i++) {
+        nomes[i] = malloc(100 * sizeof(char));
     }
 
-    char linha[1000];
-    while (fgets(linha, sizeof(linha), fp) != NULL) {
-        char *nome_ptr = strstr(linha, "Nome:");
-        if (nome_ptr != NULL) {
-            // Obtém o nome do artigo
-            char nome[100];
-            char *token = strtok(nome_ptr + strlen("Nome:"), "\n");
-            strncpy(nome, token, sizeof(nome));
+    int num_nomes = 0;
 
-            // Obtém o tempo total do artigo
-            char *tempo_total_ptr = strstr(linha, "Tempo total:");
-            if (tempo_total_ptr != NULL) {
-                char tempo_total_str[10];
-                char *token = strtok(tempo_total_ptr + strlen("Tempo total:"), "ms");
-                strncpy(tempo_total_str, token, sizeof(tempo_total_str));
+    int fout = open(nomeFIFO, O_WRONLY);
+    if (fout == -1) {
+        perror("Houve um problema ao abrir o FIFO!");
+    }
+    for (i = 0; i < s; i++) {
+        sprintf(ficheiro, "../bin/%s/%s", pasta, str_array[i]);
+        printf("ESTE È O FICHEIRO: %s\n", ficheiro);
 
-                // Converte o tempo total para um número inteiro
-                int tempo_total = atoi(tempo_total_str);
+        fp = fopen(ficheiro, "r");
+        if (fp == NULL) {
+            printf("Erro ao abrir o arquivo.\n"); // ou outro valor de retorno, dependendo da sua aplicação
+        }
 
-                // Imprime o nome do artigo e o tempo total
-                printf("Nome: %s\nTempo total: %dms\n", nome, tempo_total);
+        char linha[1000];
+        while (fgets(linha, sizeof(linha), fp) != NULL) {
+            char* nome_ptr = strstr(linha, "Nome:");
+            if (nome_ptr != NULL) {
+                // Obtém o nome do artigo
+                char* token = strtok(nome_ptr + strlen("Nome:"), "\n");
+                strncpy(nome, token, sizeof(nome));
 
-                // Verifica se o nome corresponde ao arquivo desejado
-                if (strcmp(commands[i], nome) == 0) {
-                    contador += tempo_total;
+                // Tamanho da string nome
+                int len = strlen(nome);
+
+                // Ciclo que remove o primeiro elemento da string nome que é um espaço
+                for (int i = 0; i < len; i++) {
+                    nome[i] = nome[i + 1]; // move todos os caracteres para a esquerda
+                }
+                len--;
+                // Atulizamos o comprimento da string
+
+                // Compara se o nome do programa já existe no array de nomes únicos
+                if (num_nomes == 0) {
+                    strcpy(nomes[0], nome);
+                    num_nomes++;
+                } else {
+                    int nome_existente = 0;
+                    for (int j = 0; j < num_nomes; j++) {
+                        if (strcmp(nome, nomes[j]) == 0) {
+                        nome_existente = 1;
+                        break;
+                        }  
+                    }
+
+                    if (nome_existente == 0) {
+                    // Adiciona o nome do programa ao array de nomes únicos
+                    strcpy(nomes[num_nomes], nome);
+                    num_nomes++;
+                    }
+
                 }
             }
         }
+
+        // fecha o fp
+        fclose(fp);
+    }
+    // Envio para o cliente o número de nomes unicos
+    write(fout,&num_nomes,sizeof(int));
+
+    // Envio todos os nomes unicos
+    for(i = 0; i < num_nomes; i++){
+        sprintf(info, "%s\n", nomes[i]);
+        tam = strlen(info);
+        write(fout,&tam,sizeof(int));
+        write(fout,info,strlen(info) * sizeof(char));
     }
 
-    pclose(fp);
+
+    // liberta memória
+    free(ficheiro);
+    for (i = 0; i < s; i++) {
+        free(nomes[i]);
+    }
+    free(nomes);
 }
 
-printf("Tempo total: %ldms\n", contador);
-}
-*/
+
+
+
 
 void exec_command(char** str_array,int s,char* pasta,char *nomeFIFO){
     int i;
@@ -257,6 +291,34 @@ int main(int argc, char *argv[]){
                 execStatus(lista, info); // Envia a informação para o cliente
                 exit(0);
             }
+
+        }else if(strcmp(info,"stuniq") == 0){
+            printf("Stats-Uniq\n");
+
+            read(fin,&tam,sizeof(int));
+            read(fin,info,tam*sizeof(char));
+            printf("%s\n",info);
+
+            f = info;
+
+            read(fin,&s,sizeof(int));
+
+            char** str_uniq = malloc(s * sizeof(char *));
+
+            for(int i = 0; i < s; i++){
+                read(fin,&tam,sizeof(int));
+                char* info = malloc((tam + 1) * sizeof(char));
+                read(fin,info,tam * sizeof(char));
+                info[tam] = '\0';
+                str_uniq[i] = strdup(info);
+            }
+
+
+            if (fork() == 0){
+                exec_uniq(str_uniq,s,pasta,f);
+                exit(0);
+            }
+
 
         }else if(strcmp(info,"stcomd") == 0){
             printf("Stats-command\n");
