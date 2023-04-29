@@ -5,7 +5,7 @@ server: bin/monitor
 client: bin/tracer
 
 folders:
-	@mkdir -p src obj bin tmp
+	@mkdir -p src obj bin tmp tmp/PIDS-FOLDER
 
 bin/monitor: obj/monitor.o obj/execucao.o obj/ListaLigadaExec.o
 	gcc -g obj/monitor.o obj/execucao.o obj/ListaLigadaExec.o -o bin/monitor

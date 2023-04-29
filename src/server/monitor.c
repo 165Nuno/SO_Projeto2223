@@ -242,12 +242,7 @@ int main(int argc, char *argv[]){
     char* f;
 
 
-    sprintf(pasta, "../bin/%s",argv[1]);
-    // Serve para criar a pasta caso ela não esteja criada
-    if (mkdir(pasta, 0777) == -1) {
-        perror("Erro ao criar a pasta");
-        exit(-1);
-    }
+    sprintf(pasta, "../tmp/%s",argv[1]);
 
 	// Construção do FIFO
     // Este FIFO vai ser o FIFO utilizado por todos os clientes para fazer pedidos ao servidor
@@ -412,7 +407,7 @@ int main(int argc, char *argv[]){
             removeElem(pid, lista);
 
             // Iniciamos a construção do ficheiro
-            sprintf(ficheiro,"../bin/%s/%d", pasta, pid);
+            sprintf(ficheiro,"../tmp/%s/%d", pasta, pid);
             
             FILE* file = fopen(ficheiro, "w");
             if (!file) {
