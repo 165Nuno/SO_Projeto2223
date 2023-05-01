@@ -19,14 +19,12 @@ obj/execucao.o: src/server/execucao.c
 obj/ListaLigadaExec.o: src/server/ListaLigadaExec.c
 	gcc -Wall -g -c src/server/ListaLigadaExec.c -o obj/ListaLigadaExec.o
 
-bin/tracer: obj/tracer.o obj/ProgExec.o
-	gcc -g obj/tracer.o obj/ProgExec.o -o bin/tracer
+bin/tracer: obj/tracer.o 
+	gcc -g obj/tracer.o -o bin/tracer
 
 obj/tracer.o: src/client/tracer.c
 	gcc -Wall -g -c src/client/tracer.c -o obj/tracer.o
 
-obj/ProgExec.o: src/client/ProgExec.c
-	gcc -Wall -g -c src/client/ProgExec.c -o obj/ProgExec.o
 
 clean:
 	rm -f -r obj/* tmp/* bin/*
