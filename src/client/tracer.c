@@ -56,7 +56,7 @@ void executeBasicProgram(char *command[], int argc, int fout){
 
 	// -> Antes da execução
 	// Avisa o servidor que é uma execução de um comando
-	sprintf(info, "execan");
+	sprintf(info, "preexe");
 	write(fout, info, strlen(info) * sizeof(char));
 	// Escreve o PID do processo a executar o programa
 	write(fout, &pid_exec, sizeof(int));
@@ -83,7 +83,7 @@ void executeBasicProgram(char *command[], int argc, int fout){
 	wait(NULL);
 	// -> Depois da execução
 	// Inicia o processo pós-execução
-	sprintf(info, "exefim");
+	sprintf(info, "posexe");
 	write(fout, info, strlen(info) * sizeof(char));
 	// Escreve o PID do processo que terminou a execução
 	write(fout, &pid_exec, sizeof(int));

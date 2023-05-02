@@ -371,7 +371,7 @@ int main(int argc, char *argv[]){
             }
 
   
-        }else if(strcmp(info, "execan") == 0){ // Pré execução de um programa
+        }else if(strcmp(info, "preexe") == 0){ // Pré execução de um programa
             printf("Execute antes!\n");
             // PID
             read(fin, &pid, sizeof(int));
@@ -386,7 +386,7 @@ int main(int argc, char *argv[]){
 
             Exec exe = constroiExec(pid, tempo_antes, nome);
             insereElem(exe, lista);
-        }else if(strcmp(info, "exefim") == 0){ // Pós execução de um programa
+        }else if(strcmp(info, "posexe") == 0){ // Pós execução de um programa
             printf("Execute depois!\n");
 
             // PID
