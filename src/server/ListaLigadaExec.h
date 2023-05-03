@@ -13,12 +13,10 @@ typedef struct lligadaexecucao{
     struct lligadaexecucao *prox;
 }*LLEXEC;
 
-LLEXEC initList();
+LLEXEC inicializa_lista();
 
-void insereElem(Exec exec, LLEXEC* lista);
+void insere_elemento(Exec exec, LLEXEC* lista);
 
-void removeElem(int pid, LLEXEC* lista);
+void remove_elemento(int pid, LLEXEC* lista);
 
-//void printaListaExe(LLEXEC* lista);
-
-void execStatus(LLEXEC* lista, char *nomeFIFO);
+void execuca_status(LLEXEC* lista, char *nomeFIFO);

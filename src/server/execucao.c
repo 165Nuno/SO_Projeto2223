@@ -1,7 +1,7 @@
 #include "execucao.h"
 
 // >>> Função que constroi um Exec
-Exec constroiExec(int pid, long tempo, char *nome){
+Exec constroi_execucao(int pid, long tempo, char *nome){
     Exec exe = malloc(sizeof(struct exec));
 
     exe->pid = pid;

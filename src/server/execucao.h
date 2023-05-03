@@ -9,8 +9,7 @@ typedef struct exec{
   long tempo; 
 }*Exec;
 
-Exec constroiExec(int pid, long tempo, char *nome);
+Exec constroi_execucao(int pid, long tempo, char *nome);
 
-void printaExec(Exec exe);
 
 #endif /* EXECUCAO_H */

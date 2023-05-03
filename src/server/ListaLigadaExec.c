@@ -2,7 +2,7 @@
 
 // Inicia a lista ligada de struct execucao
 // Esta função não faz nada basicamente porque a memória é alocada ao inserir um elemento
-LLEXEC initList() {
+LLEXEC inicializa_lista() {
     LLEXEC lista = (LLEXEC) malloc(sizeof(struct lligadaexecucao));
     lista->elem = NULL;
     lista->prox = NULL;
@@ -10,7 +10,7 @@ LLEXEC initList() {
 }
 
 // Esta função insere o elemento à cabeça da lista ligada
-void insereElem(Exec exec, LLEXEC* lista){
+void insere_elemento(Exec exec, LLEXEC* lista){
     LLEXEC elem = malloc(sizeof(struct lligadaexecucao));
     elem->elem = exec;
     elem->prox = (*lista);
@@ -18,7 +18,7 @@ void insereElem(Exec exec, LLEXEC* lista){
 }
 
 // Remove da lista ligada um programa que já terminou a sua execução
-void removeElem(int pid, LLEXEC* lista){
+void remove_elemento(int pid, LLEXEC* lista){
     Exec aux;
     int removido = 0;
 
@@ -34,15 +34,7 @@ void removeElem(int pid, LLEXEC* lista){
     }   
 }
 
-/*
-void printaListaExe(LLEXEC* lista){
 
-    while((*lista) != NULL){
-        printaExec((*lista)->elem);
-        lista = &(*lista)->prox;
-    }
-}
-*/
 
 // Devolve o número de elementos na lista ligada
 int tamLista(LLEXEC *lista){
@@ -56,7 +48,7 @@ int tamLista(LLEXEC *lista){
     return tam;
 }
 
-void execStatus(LLEXEC* lista, char *nomeFIFO){
+void execuca_status(LLEXEC* lista, char *nomeFIFO){
     char info[100];
     int fout = open(nomeFIFO, O_WRONLY);
     if(fout == -1){

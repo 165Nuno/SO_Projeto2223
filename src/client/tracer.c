@@ -114,7 +114,7 @@ int main(int argc, char *argv[]){
 
 	// Abertura do FIFO de escrita
 	// Todos os clientes enviam os seus pedidos ao servidor por este FIFO
-	int fout = open("cliente_para_servidor", O_WRONLY);
+	int fout = open("cliente_servidor", O_WRONLY);
 	if(fout == -1){
 		perror("Erro ao abrir o FIFO para escrita e leitura.");
 		exit(-1);

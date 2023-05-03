@@ -10,8 +10,8 @@
 #include "execucao.h"
 #include "ListaLigadaExec.h"
 
-#define MAX_BUFFER_SIZE 1024
 
+// >>> Função responsável pelo o stats-uniq <<<
 void exec_uniq(char** str_array, int s, char* pasta, char* nomeFIFO) {
     int i;
     int tam;
@@ -35,7 +35,7 @@ void exec_uniq(char** str_array, int s, char* pasta, char* nomeFIFO) {
     }
     for (i = 0; i < s; i++) {
         sprintf(ficheiro, "../bin/%s/%s", pasta, str_array[i]);
-        printf("ESTE È O FICHEIRO: %s\n", ficheiro);
+        printf("DEBUG >>> ESTE É O FICHEIRO: %s\n", ficheiro);
 
         fp = fopen(ficheiro, "r");
         if (fp == NULL) {
@@ -44,10 +44,10 @@ void exec_uniq(char** str_array, int s, char* pasta, char* nomeFIFO) {
 
         char linha[1000];
         while (fgets(linha, sizeof(linha), fp) != NULL) {
-            char* nome_ptr = strstr(linha, "Nome:");
+            char* nome_ptr = strstr(linha, "Nome do programa:");
             if (nome_ptr != NULL) {
                 // Obtém o nome do artigo
-                char* token = strtok(nome_ptr + strlen("Nome:"), "\n");
+                char* token = strtok(nome_ptr + strlen("Nome do programa:"), "\n");
                 strncpy(nome, token, sizeof(nome));
 
                 // Tamanho da string nome
@@ -108,7 +108,7 @@ void exec_uniq(char** str_array, int s, char* pasta, char* nomeFIFO) {
 
 
 
-
+// >>> Função responsável pelo o stats-command <<<
 
 void exec_command(char** str_array,int s,char* pasta,char *nomeFIFO){
     int i;
@@ -124,7 +124,7 @@ void exec_command(char** str_array,int s,char* pasta,char *nomeFIFO){
     }
     for(i = 1; i < s; i++){
         sprintf(ficheiro,"../bin/%s/%s",pasta,str_array[i]);
-        printf("ESTE È O FICHEIRO: %s\n",ficheiro);
+        printf("DEBUG >>> ESTE É O FICHEIRO: %s\n",ficheiro);
 
         fp = fopen(ficheiro, "r");
         if (fp == NULL) {
@@ -133,10 +133,10 @@ void exec_command(char** str_array,int s,char* pasta,char *nomeFIFO){
 
         char linha[1000];
     while (fgets(linha, sizeof(linha), fp) != NULL) {
-        char *nome_ptr = strstr(linha, "Nome:");
+        char *nome_ptr = strstr(linha, "Nome do programa:");
         if (nome_ptr != NULL) {
             // Obtém o nome do artigo
-            char *token = strtok(nome_ptr + strlen("Nome:"), "\n");
+            char *token = strtok(nome_ptr + strlen("Nome do programa:"), "\n");
             strncpy(nome, token, sizeof(nome));
             
             // Tamanho da string nome
@@ -167,7 +167,7 @@ void exec_command(char** str_array,int s,char* pasta,char *nomeFIFO){
 
 }
 
-
+// >>> Função responsável pelo o stats-time <<<
 
 void exec_time(char** str_array,int s,char* pasta,char *nomeFIFO){
     int i;
@@ -185,7 +185,7 @@ void exec_time(char** str_array,int s,char* pasta,char *nomeFIFO){
 
     for(i = 0; i < s; i++){
         sprintf(ficheiro,"../bin/%s/%s",pasta,str_array[i]);
-        printf("ESTE È O FICHEIRO: %s\n",ficheiro);
+        printf("DEBUG >>> ESTE É O FICHEIRO: %s\n",ficheiro);
 
         fp = fopen(ficheiro, "r");
         if (fp == NULL) {
@@ -196,10 +196,10 @@ void exec_time(char** str_array,int s,char* pasta,char *nomeFIFO){
         int encontrou_nome = 1;
     while (fgets(linha, sizeof(linha), fp) != NULL) {
         if (encontrou_nome == 0) {
-            char *tempo_total_ptr = strstr(linha, "Tempo total:");
+            char *tempo_total_ptr = strstr(linha, "Tempo total de execucao:");
             if (tempo_total_ptr != NULL) {
                 char tempo_total_str[10];
-                char *token = strtok(tempo_total_ptr + strlen("Tempo total:"), "ms");
+                char *token = strtok(tempo_total_ptr + strlen("Tempo total de execucao:"), "ms");
                 strncpy(tempo_total_str, token, sizeof(tempo_total_str));
 
                 // Converte o tempo total para um número inteiro
@@ -213,10 +213,10 @@ void exec_time(char** str_array,int s,char* pasta,char *nomeFIFO){
             }
         }
 
-        char *nome_ptr = strstr(linha, "Nome:");
+        char *nome_ptr = strstr(linha, "Nome do programa:");
         if (nome_ptr != NULL) {
             // Obtém o nome do artigo
-            char *token = strtok(nome_ptr + strlen("Nome:"), "\n");
+            char *token = strtok(nome_ptr + strlen("Nome do programa:"), "\n");
             strncpy(nome, token, sizeof(nome));
 
             // Define a variável encontrou_nome como true para a próxima iteração do loop
@@ -232,6 +232,8 @@ void exec_time(char** str_array,int s,char* pasta,char *nomeFIFO){
     write(fout,&contador,sizeof(int));
 }
 
+// >>> Main do Monitor <<<
+
 int main(int argc, char *argv[]){
     long tempo_antes;
     long tempo_depois;
@@ -246,7 +248,7 @@ int main(int argc, char *argv[]){
 
 	// Construção do FIFO
     // Este FIFO vai ser o FIFO utilizado por todos os clientes para fazer pedidos ao servidor
-	int p = mkfifo("cliente_para_servidor",0660);
+	int p = mkfifo("cliente_servidor",0660);
     if(p==-1){
         if(errno != EEXIST){// Quando o erro não é o erro de o fifo já existir
             printf("Erro ao construir fifo\n");
@@ -256,25 +258,25 @@ int main(int argc, char *argv[]){
 
 	// Abertura do FIFO
     // O servidor apenas lê deste FIFO
-	int fin = open("cliente_para_servidor", O_RDONLY);
+	int fin = open("cliente_servidor", O_RDONLY);
 	if(fin == -1){
 		perror("Erro ao abrir FIFO para ler e escrever");
 		exit(-1);
 	}
 
-    int fout = open("cliente_para_servidor", O_WRONLY);
+    int fout = open("cliente_servidor", O_WRONLY);
     if(fout == -1) {
         printf("%s\n", strerror(errno));
         exit(-1);
     }
 
     // Lista que vai ter as execuções atuais
-    LLEXEC l = initList();
+    LLEXEC l = inicializa_lista();
     LLEXEC *lista = &l;
 
     while((n=read(fin, info, 6 * sizeof(char))) > 0){
         info[6] = '\0';
-        printf("Info: %s\n", info);
+        printf("Innformação lida: %s\n", info);
         if(strcmp(info,"status") == 0){ // Status de todos os programas
             printf("Status!\n");
             // Recebe o nome do FIFO de escrita
@@ -283,16 +285,15 @@ int main(int argc, char *argv[]){
             
             // Um processo filho trata os pedidos "status"
             if(fork() == 0){
-                execStatus(lista, info); // Envia a informação para o cliente
+                execuca_status(lista, info); // Envia a informação para o cliente
                 exit(0);
             }
 
         }else if(strcmp(info,"stuniq") == 0){
-            printf("Stats-Uniq\n");
+            printf("DEBUG >>> Stats-uniq\n");
 
             read(fin,&tam,sizeof(int));
             read(fin,info,tam*sizeof(char));
-            printf("%s\n",info);
 
             f = info;
 
@@ -316,11 +317,10 @@ int main(int argc, char *argv[]){
 
 
         }else if(strcmp(info,"stcomd") == 0){
-            printf("Stats-command\n");
+            printf("DEBUG >>> Stats-command\n");
 
             read(fin,&tam,sizeof(int));
             read(fin,info,tam * sizeof(char));
-            printf("%s\n",info);
 
             f = info;
 
@@ -342,17 +342,15 @@ int main(int argc, char *argv[]){
             }
 
         }else if(strcmp(info,"sttime") == 0){
-            printf("Stats-time\n");
+            printf("DEBUG >>> Stats-time\n");
 
             read(fin, &tam, sizeof(int));
             read(fin, info, tam * sizeof(char));
-            printf("%s\n",info);
 
             f = info;
 
             
             read(fin,&s,sizeof(int));
-            printf("TESTE: %d\n",s);
 
 
             char** str_array = malloc(s * sizeof(char*));
@@ -372,39 +370,39 @@ int main(int argc, char *argv[]){
 
   
         }else if(strcmp(info, "preexe") == 0){ // Pré execução de um programa
-            printf("Execute antes!\n");
+            printf("DEBUG >>> Pré-Execução!!!!\n");
             // PID
             read(fin, &pid, sizeof(int));
-            printf("[EXECAN DEBUG] PID: %d\n", pid);
+            printf("DEBUG >>> Pré-execução - PID: %d\n", pid);
             // Nome
             read(fin, &tam, sizeof(int));
             read(fin, &nome, tam * sizeof(char));
-            printf("[EXECAN DEBUG] Nome: %s\n", nome);
+            printf("DEBUG >>> Pré-execução - Nome: %s\n", nome);
             // TimeStamp
             read(fin, &tempo_antes, sizeof(long));
-            printf("[EXECAN DEBUG] TimeStamp: %li\n", tempo_antes);
+            printf("DEBUG >>> Pré-execução - TimeStamp: %li\n", tempo_antes);
 
-            Exec exe = constroiExec(pid, tempo_antes, nome);
-            insereElem(exe, lista);
+            Exec exe = constroi_execucao(pid, tempo_antes, nome);
+            insere_elemento(exe, lista);
         }else if(strcmp(info, "posexe") == 0){ // Pós execução de um programa
-            printf("Execute depois!\n");
+            printf("DEBUG >>> Pós-Execução!!!!\n");
 
             // PID
             read(fin, &pid, sizeof(int));
-            printf("[EXEFIM DEBUG] PID: %d\n", pid);
+            printf("DEBUG >>> Pós-execução - PID: %d\n", pid);
 
             // Nome
             read(fin,&tam,sizeof(int));
             read(fin,&nome,tam * sizeof(char));
-            printf("[EXEFIM DEBUG] Nome: %s\n",nome);
+            printf("DEBUG >>> Pós-execução - Nome: %s\n",nome);
             // TimeStamp
             read(fin, &tempo_depois, sizeof(long));
-            printf("[EXEFIM DEBUG] TimeStamp: %li\n", tempo_depois);
+            printf("DEBUG >>> Pós-execução - TimeStamp: %li\n", tempo_depois);
 
             long final = tempo_depois - tempo_antes;
 
             // Remove o programa da lista ligada que terminou a sua execução
-            removeElem(pid, lista);
+            remove_elemento(pid, lista);
 
             // Iniciamos a construção do ficheiro
             sprintf(ficheiro,"../tmp/%s/%d", pasta, pid);
@@ -415,7 +413,7 @@ int main(int argc, char *argv[]){
                 exit(-1);
             }
 
-            fprintf(file, "Nome: %s\nTempo total: %lims\n", nome, final);
+            fprintf(file, "Nome do programa: %s\nTempo total de execucao: %lims\n", nome, final);
             fclose(file);
 
             // 
