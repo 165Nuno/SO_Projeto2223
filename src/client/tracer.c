@@ -49,10 +49,8 @@ void executeBasicProgram(char *command[], int argc, int fout){
 			exit(-1);
 		}
     }else{
-        // Estamos no processo [PAI]
-
-    }
-    close(pipefd[0]); // O pai só vai escrever para este pipe
+    // Estamos no processo [PAI]
+	close(pipefd[0]); // O pai só vai escrever para este pipe
 
 	// -> Antes da execução
 	// Avisa o servidor que é uma execução de um comando
@@ -71,7 +69,6 @@ void executeBasicProgram(char *command[], int argc, int fout){
 	// Manda para o utilizador o PID (stdout)
 	sprintf(info, "Running PID: %d\n", pid_exec);
 	write(1, info, strlen(info) * sizeof(char));
-	// <-
     
     // Avisa o filho para começar a executar
     sprintf(info, "ok");
@@ -99,7 +96,9 @@ void executeBasicProgram(char *command[], int argc, int fout){
 	float execucao_tempo = fim_ms - antes_ms;
 	sprintf(info, "Ended in: %.0fms\n", execucao_tempo);
 	write(1,info,strlen(info)*sizeof(char));
-	// <-
+
+    }
+    
 }
 
 
@@ -130,6 +129,7 @@ int main(int argc, char *argv[]){
             exit(-1);
         }
     }
+	
 
 switch(argc) {
 	// Caso em que só temos ./tracer que corresponde a um comando inválido
@@ -180,10 +180,9 @@ switch(argc) {
     default:
 	    if(strcmp(argv[1], "execute") == 0){
             if(strcmp(argv[2], "-u") == 0){
-                printf("Execução Básica de Programas\n");
                 executeBasicProgram(&argv[3], argc, fout);
             } else if(strcmp(argv[2], "-p") == 0){
-                printf("Pipeline de programas!\n");
+                printf("Não conseguimos implementar pipeline\n");
                 //executeProgramPipeLine(argv[3]);
             } else {
                 sprintf(linha, "Erro Comando Inválido!\n");
@@ -208,7 +207,7 @@ switch(argc) {
 				write(fout, &tamanho, sizeof(int));
 				write(fout, argv[i], tamanho * sizeof(char));
 			}
-
+			
 			fin = open(nome_fifo, O_RDONLY);
 			if(fin == -1){
 				perror("Erro ao abrir o FIFO para escrita e leitura.");
@@ -254,9 +253,6 @@ switch(argc) {
 					write(1,auxiliar,strlen(auxiliar) * sizeof(char));
 				}
 
-
-
-			
 		}else if (strcmp(argv[1],"stats-command") == 0){
 				sprintf(linha,"stcomd");
 				write(fout,linha,strlen(linha) * sizeof(char));

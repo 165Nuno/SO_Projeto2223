@@ -50,9 +50,11 @@ int tamLista(LLEXEC *lista){
 
 void execuca_status(LLEXEC* lista, char *nomeFIFO){
     char info[100];
+
     int fout = open(nomeFIFO, O_WRONLY);
     if(fout == -1){
         perror("Houve um problema ao abrir o FIFO!");
+        exit(-1);
     }
 
     int tam = tamLista(lista);
