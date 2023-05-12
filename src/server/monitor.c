@@ -10,6 +10,8 @@
 #include "execucao.h"
 #include "ListaLigadaExec.h"
 
+#define SIZE 6
+
 
 // >>> Função responsável pelo o stats-uniq <<<
 void exec_uniq(char** str_array, int s, char* pasta, char* nomeFIFO) {
@@ -228,7 +230,7 @@ int main(int argc, char *argv[]){
     LLEXEC l = inicializa_lista();
     LLEXEC *lista = &l;
 
-    while((n=read(fin, info, 6 * sizeof(char))) > 0){
+    while((n=read(fin, info, SIZE * sizeof(char))) > 0){
         info[6] = '\0';
         printf("Informação lida: %s\n", info);
         if(strcmp(info,"status") == 0){ // Status de todos os programas
