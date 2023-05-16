@@ -131,6 +131,7 @@ int main(int argc, char *argv[]){
     }
 	
 
+
 switch(argc) {
 	// Caso em que só temos ./tracer que corresponde a um comando inválido
     case 1:
@@ -192,7 +193,7 @@ switch(argc) {
 			sprintf(linha, "sttime");
             write(fout, linha, strlen(linha) * sizeof(char));
 
-			tamanho = strlen(nome_fifo);
+			tamanho = strlen(nome_fifo) + 1;
 			write(fout, &tamanho, sizeof(int));
 			write(fout, nome_fifo, tamanho * sizeof(char));
 

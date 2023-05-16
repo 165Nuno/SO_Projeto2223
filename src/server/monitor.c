@@ -13,6 +13,7 @@
 #define SIZE 6
 
 
+
 // >>> Função responsável pelo o stats-uniq <<<
 void exec_uniq(char** str_array, int s, char* pasta, char* nomeFIFO) {
     int i;
