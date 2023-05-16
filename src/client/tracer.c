@@ -250,8 +250,8 @@ switch(argc) {
 				for(int i = 0; i < tam; i++){
 					read(fin,&tamanho,sizeof(int));
 					read(fin,linha,tamanho * sizeof(char));
-					sprintf(auxiliar,"%s",linha);
-					write(1,auxiliar,strlen(auxiliar) * sizeof(char));
+					//sprintf(auxiliar,"%s",linha);
+					write(1,linha,strlen(linha) * sizeof(char));
 				}
 
 		}else if (strcmp(argv[1],"stats-command") == 0){

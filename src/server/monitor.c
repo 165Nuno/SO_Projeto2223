@@ -332,8 +332,9 @@ int main(int argc, char *argv[]){
             read(fin, &pid, sizeof(int));
             printf("DEBUG >>> Pré-execução - PID: %d\n", pid);
             // Nome
-            read(fin, &tam, sizeof(int));
-            read(fin, &nome, tam * sizeof(char));
+            read(fin, &tam, sizeof(int));       
+            read(fin, nome, tam * sizeof(char));
+            nome[tam] = '\0';
             printf("DEBUG >>> Pré-execução - Nome: %s\n", nome);
             // TimeStamp
             read(fin, &tempo_antes, sizeof(long));
@@ -350,7 +351,8 @@ int main(int argc, char *argv[]){
 
             // Nome
             read(fin,&tam,sizeof(int));
-            read(fin,&nome,tam * sizeof(char));
+            read(fin,nome,tam * sizeof(char));
+            nome[tam] = '\0';
             printf("DEBUG >>> Pós-execução - Nome: %s\n",nome);
             // TimeStamp
             read(fin, &tempo_depois, sizeof(long));
